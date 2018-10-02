@@ -4,4 +4,4 @@
 
 A multi-tool made in Go, and aimed at security experts to make life a little more convenient
 
-Project just added to GitHub - better description to code!
+Project just added to GitHub - better description to come!
