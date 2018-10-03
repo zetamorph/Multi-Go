@@ -17,9 +17,6 @@ limitations under the License.
 */
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
-	"fmt"
 	"os"
 
 	"github.com/akamensky/argparse"
@@ -41,90 +38,40 @@ func main() {
 	}
 
 	// TODO: add 'bleach'
+	// TODO: add 'compress'
+	// TODO: add 'uncompress'
+	// TODO: add 'pwnAccount'
+	// TODO: add 'DOS' (IP based)
+	// TODO: add 'Audit' (3rd party integrated system)
+	// TODO: add 'toggleIncoming' (inbound connections)
+	// TODO: add 'email'
 	// Determine task
 	switch *t {
 	case "Hash":
-		println("Running task:", *t, "\nTarget:", *r)
+		println("\nRunning task:", *t, "\nTarget:", *r)
 		hashFile(*r)
 	case "pwnAccount":
-		println("Running task:", *t, "\nTarget:", *r)
+		println("\nRunning task:", *t, "\nTarget:", *r)
 		pwnAccount(*r)
 	case "encryptFile":
-		println("Running task:", *t, "\nTarget:", *r)
+		println("\nRunning task:", *t, "\nTarget:", *r)
 		encryptFileTask(*r)
 	case "decryptFile":
-		println("Running task:", *t, "\nTarget:", *r)
+		println("\nRunning task:", *t, "\nTarget:", *r)
 		decryptFileTask(*r)
+	case "Scrape":
+		println("\nRunning task:", *t, "\nTarget:", *r)
+		scrape(*r)
+	case "Email":
+		emailTask()
 	case "About":
 		about()
 	case "List":
 		listTasks()
-	case "Scrape":
-		println("Running task:", *t, "\nTarget:", *r)
-		scrape(*r)
 	default:
 		ct.Foreground(ct.Red, true)
 		println("Invalid task - ", *t)
 		ct.Foreground(ct.Yellow, false)
 		println("Use '--help' or '-t List'")
 	}
-}
-
-// TODO: document
-// Takes a file path, and then prints the hash of the file
-func hashFile(target string) {
-	file := readFileIntoByte(target)
-	hash := sha1.New()
-	hash.Write(file)
-	target = base64.URLEncoding.EncodeToString(hash.Sum(nil))
-
-	fmt.Println("SHA-1 hash :", target)
-}
-
-// ListTasks - lists all currently working tasks
-func listTasks() {
-	ct.Foreground(ct.Yellow, false)
-	println("Available tasks:")
-	println("Hash -r [file path]")
-	println("encryptFile -r [file path]")
-	println("decryptFile -r [file path]")
-	println("Scape - [URL]")
-	println("About") // keep at bottom of print statements
-}
-
-// TODO: use pwn api to see if an account has been pwned
-func pwnAccount(target string) {
-	ct.Foreground(ct.Red, true)
-	println("Not a working feature yet")
-}
-
-// Encrypts the target file
-func encryptFileTask(target string) {
-	data := readFileIntoByte(target)
-	password := getPassword()
-	encryptFile(target, data, password)
-	println("\nFile encrypted!")
-}
-
-// BUG: decrypted file is unusable
-// Decrypts the target file
-func decryptFileTask(target string) {
-	password := getPassword()
-	decryptFile(target, password)
-	println("\nFile decrypted!")
-}
-
-// TODO: description about program
-// Prints details about the program
-func about() {
-	printBanner()
-	println("Multi Go - 1.0.0", "\nBy - TheRedSpy15")
-	println("GitHub:", "https://github.com/TheRedSpy15")
-}
-
-// NOTE: refer to 'scrape' function
-// Scrapes target website
-func scapeTask(target string) {
-	checkTarget(target)
-	scrape(target)
 }

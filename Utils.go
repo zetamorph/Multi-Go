@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 	"syscall"
 
 	"github.com/daviddengcn/go-colortext"
@@ -30,7 +29,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-// BUG: doesn't work
+// BUG: still runs scrape task
 // check if target is empty, panic if is
 func checkTarget(target string) {
 	if target == "" {
@@ -81,45 +80,39 @@ func printBanner() {
 	ct.Foreground(ct.Yellow, false)
 }
 
-// TODO: document
-// TODO: add color for each part of code
-// WARNING: experimental & do not use until response from colly devs!
+// TODO: scrape list of files from text file
 // Util function - scrapes a website link
 func scrape(site string) {
-	c := colly.NewCollector()
+	c := colly.NewCollector() // make colly object
+	c.IgnoreRobotsTxt = true
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	c.OnError(func(_ *colly.Response, err error) {
+	c.OnError(func(_ *colly.Response, err error) { // print error message on error
+		ct.Foreground(ct.Red, true)
 		log.Println("Something went wrong:", err)
+		ct.ResetColor()
 	})
 
 	c.OnResponse(func(r *colly.Response) {
 		fmt.Println("Visited", r.Request.URL)
+		println("Response:", r.StatusCode)
 	})
 
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
-	})
-
-	c.OnHTML("tr td:nth-of-type(1)", func(e *colly.HTMLElement) {
-		fmt.Println("First column of a table row:", e.Text)
-	})
-
-	c.OnXML("//h1", func(e *colly.XMLElement) {
-		fmt.Println(e.Text)
-	})
-
-	c.OnScraped(func(r *colly.Response) {
+	c.OnScraped(func(r *colly.Response) { // finished with site
 		fmt.Println("Finished", r.Request.URL)
-		if strings.Contains(r.FileName(), ".jpg") {
-			err := r.Save(r.FileName())
-			if err != nil {
-				ct.Foreground(ct.Red, true)
-				panic("Error saving")
-			}
+
+		err := r.Save(r.FileName()) // saving data
+
+		if err != nil {
+			ct.Foreground(ct.Red, true)
+			panic("Error saving")
+		} else {
+			ct.Foreground(ct.Green, true)
+			println("Saved - ", r.FileName())
+			ct.ResetColor()
 		}
 	})
 
