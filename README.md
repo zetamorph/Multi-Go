@@ -11,8 +11,8 @@ A multi-tool made in Go, and aimed at security experts to make life a little mor
 - DOS attack
 - email
 - scrape website
-### Working on:
 - password generator
+### Working on:
 - secure file deletion
 - file compression/decompression
 - check if account is breached (HaveIBeenPwned)
