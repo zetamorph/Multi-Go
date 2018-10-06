@@ -18,6 +18,7 @@ A multi-tool made in Go, and aimed at security experts to make life a little mor
 - check if account is breached (HaveIBeenPwned)
 - toggle incoming connections
 - system vulerability audit (online/offline modes)
+- system info
 ## How to
 ### Download:
 There isn't an offical executable yet. However, I should have one under 'releases' in the next week.
