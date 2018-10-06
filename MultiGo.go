@@ -3,6 +3,13 @@ package main
 // Project TODOS
 // TODO: finish email task
 // TODO: finish audit task
+// TODO: add 'bleach'
+// TODO: add 'compress'
+// TODO: add 'uncompress'
+// TODO: add 'pwnAccount'
+// TODO: add 'toggleIncoming' (inbound connections)
+// TODO: add 'systemInfo'
+// TODO: add 'auditOffline' (also add "run offline?", when no internet)
 
 /*
 Copyright 2018 TheRedSpy15
@@ -41,14 +48,6 @@ func main() {
 		panic(err.Error)
 	}
 
-	// TODO: add 'generatePassword'
-	// TODO: add 'bleach'
-	// TODO: add 'compress'
-	// TODO: add 'uncompress'
-	// TODO: add 'pwnAccount'
-	// TODO: add 'toggleIncoming' (inbound connections)
-	// TODO: add 'systemInfo'
-	// TODO: add 'auditOffline' (also add "run offline?", when no internet)
 	// Determine task
 	switch *t {
 	case "Hash":

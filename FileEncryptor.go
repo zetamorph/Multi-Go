@@ -16,6 +16,7 @@ Copyright 2018 TheRedSpy15
 limitations under the License.
 */
 
+// TODO: document
 // Code copied from (will be changing to be in my own code!) :
 // https://www.thepolyglotdeveloper.com/2018/02/encrypt-decrypt-data-golang-application-crypto-packages/
 
