@@ -5,14 +5,12 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/theredspy15/multi-go/badge)](https://www.codefactor.io/repository/github/theredspy15/multi-go)
 
 A multi-tool made in Go, and aimed at security experts to make life a little more convenient. It does this by combining a massive array of different tasks, into one program.
-
 ### Currently capable of:
 - file encryption/decryption
 - file hashing
 - DOS attack
 - email
 - scrape website
-
 ### Working on:
 - password generator
 - secure file deletion
@@ -20,7 +18,6 @@ A multi-tool made in Go, and aimed at security experts to make life a little mor
 - check if account is breached (HaveIBeenPwned)
 - toggle incoming connections
 - system vulerability audit (online/offline modes)
-
 ## How to
 ### Download:
 There isn't an offical executable yet. However, I should have one under 'releases' in the next week.
