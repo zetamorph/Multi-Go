@@ -1,5 +1,9 @@
 package main
 
+// Project TODOS
+// TODO: finish email task
+// TODO: finish audit task
+
 /*
 Copyright 2018 TheRedSpy15
 
@@ -34,17 +38,17 @@ func main() {
 	// Error handling
 	err := parser.Parse(os.Args)
 	if err != nil {
-		panic(parser.Usage(err))
+		panic(err.Error)
 	}
 
+	// TODO: add 'generatePassword'
 	// TODO: add 'bleach'
 	// TODO: add 'compress'
 	// TODO: add 'uncompress'
 	// TODO: add 'pwnAccount'
-	// TODO: add 'DOS' (IP based)
-	// TODO: add 'Audit' (3rd party integrated system)
 	// TODO: add 'toggleIncoming' (inbound connections)
-	// TODO: add 'email'
+	// TODO: add 'systemInfo'
+	// TODO: add 'auditOffline' (also add "run offline?", when no internet)
 	// Determine task
 	switch *t {
 	case "Hash":
@@ -61,14 +65,21 @@ func main() {
 		decryptFileTask(*r)
 	case "Scrape":
 		println("\nRunning task:", *t, "\nTarget:", *r)
-		scrape(*r)
+		scapeTask(*r)
+	case "Dos":
+		println("\nRunning task:", *t, "\nTarget:", *r)
+		dosTask(*r)
+	case "generatePassword":
+		generatePassword()
+	case "Audit":
+		auditTask()
 	case "Email":
 		emailTask()
 	case "About":
 		about()
 	case "List":
 		listTasks()
-	default:
+	default: // invalid
 		ct.Foreground(ct.Red, true)
 		println("Invalid task - ", *t)
 		ct.Foreground(ct.Yellow, false)

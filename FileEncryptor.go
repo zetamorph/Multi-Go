@@ -28,6 +28,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+
+	"github.com/daviddengcn/go-colortext"
 )
 
 func createHash(key string) string {
@@ -40,10 +42,12 @@ func encrypt(data []byte, passphrase string) []byte {
 	block, _ := aes.NewCipher([]byte(createHash(passphrase)))
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	ciphertext := gcm.Seal(nonce, nonce, data, nil)
@@ -53,6 +57,7 @@ func encrypt(data []byte, passphrase string) []byte {
 func encryptFile(filename string, data []byte, passphrase string) {
 	f, err := os.Create(filename)
 	if err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	defer f.Close()
@@ -63,22 +68,30 @@ func decrypt(data []byte, passphrase string) []byte {
 	key := []byte(createHash(passphrase))
 	block, err := aes.NewCipher(key)
 	if err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	nonceSize := gcm.NonceSize()
 	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 	return plaintext
 }
 
 func decryptFile(filename string, passphrase string) []byte {
-	data, _ := ioutil.ReadFile(filename)
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		ct.Foreground(ct.Red, true)
+		panic(err.Error())
+	}
+
 	return decrypt(data, passphrase)
 }

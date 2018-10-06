@@ -23,19 +23,20 @@ import (
 	"fmt"
 	"net/smtp"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/daviddengcn/go-colortext"
 	"github.com/jordan-wright/email"
 )
 
-// TODO: document
 // Takes a file path, and then prints the hash of the file
 func hashFile(target string) {
 	checkTarget(target)
-	file := readFileIntoByte(target)
-	hash := sha1.New() // create sh1 object
-	hash.Write(file)
-	target = base64.URLEncoding.EncodeToString(hash.Sum(nil))
+	file := readFileIntoByte(target)                          // get bytes of file to hash
+	hash := sha1.New()                                        // create sha1 object
+	hash.Write(file)                                          // hash file to object
+	target = base64.URLEncoding.EncodeToString(hash.Sum(nil)) // encode hash sum into string
 
 	fmt.Println("SHA-1 hash :", target)
 }
@@ -48,6 +49,9 @@ func listTasks() {
 	println("encryptFile -r [file path]")
 	println("decryptFile -r [file path]")
 	println("Scrape - [URL]")
+	println("DOS - [IP/URL]")
+	println("Email")
+	println("generatePassword")
 	println("About") // keep at bottom of print statements
 }
 
@@ -59,26 +63,39 @@ func pwnAccount(target string) {
 
 // Encrypts the target file
 func encryptFileTask(target string) {
-	checkTarget(target)
-	data := readFileIntoByte(target)
-	password := getPassword()
-	encryptFile(target, data, password)
+	checkTarget(target) // make target is valid
+
+	data := readFileIntoByte(target) // read file bytes
+	print("Enter Password: ")
+	password := getPassword() // get password securely
+
+	encryptFile(target, data, password) // encrypt file
 	println("\nFile encrypted!")
 }
 
 // BUG: decrypted file is unusable
+// NOTE: decrypt file doesn't actually save as unencrypted
 // Decrypts the target file
 func decryptFileTask(target string) {
-	checkTarget(target)
-	password := getPassword()
-	decryptFile(target, password)
+	checkTarget(target) // make target is valid
+
+	print("Enter Password: ")
+	password := getPassword() // get password securely
+
+	file, err := os.Create(target)
+	if err != nil {
+		ct.Foreground(ct.Red, true)
+		panic(err.Error())
+	}
+	defer file.Close()
+	file.Write(decryptFile(target, password)) // decrypt file
 	println("\nFile decrypted!")
 }
 
 // Prints details about the program
 func about() {
 	printBanner()
-	println("Multi Go - 1.0.0", "\nBy - TheRedSpy15")
+	println("Multi Go v1.0.0", "\nBy: TheRedSpy15")
 	println("GitHub:", "https://github.com/TheRedSpy15")
 	println("Project Page:", "https://github.com/TheRedSpy15/Multi-Go")
 	println("\nMulti Go allows IT admins and Cyber Security experts")
@@ -87,12 +104,47 @@ func about() {
 
 // Scrapes target website
 func scapeTask(target string) {
-	checkTarget(target)
-	scrape(target)
+	checkTarget(target)               // make target is valid
+	collyAddress(target, true, false) // run colly
 }
 
-// TODO: send file option
+// TODO: use project path to find file
+// BUG: exit status 1
+// Runs linuxScanner.py to audit system vulnerabilities
+func auditTask() {
+	ct.Foreground(ct.Yellow, false)
+	runAudit() // run audit
+}
+
+// TODO: use set length
+// Generates a random string for use as a password
+func generatePassword() {
+	ct.Foreground(ct.Yellow, false)
+	println(randomString())
+}
+
+// TODO: add amplification
+// TODO: more testing
+// Indefinitely runs colly on an address
+func dosTask(target string) {
+	checkTarget(target) // make target is valid
+	ct.Foreground(ct.Red, true)
+	println("\nWarning: you are solely responsible for your actions!") // disclaimer
+	println("ctrl + c to cancel")
+	println("\n10 seconds until DOS")
+	ct.ResetColor()
+
+	time.Sleep(10 * time.Second) // 10 second delay - give chance to cancel
+
+	for true { // DOS loop
+		collyAddress(target, false, true)
+	}
+}
+
+// BUG: mail: missing word in phrase: mail: invalid string
+// TODO: use native go email
 // TODO: break up into multiple functions
+// TODO: find out if attachment works with path, or just name
 // Send email
 func emailTask() {
 	reader := bufio.NewReader(os.Stdin) // make reader object
@@ -103,46 +155,52 @@ func emailTask() {
 
 	// email setup
 	print("From: ")
-	e.From, _ = reader.ReadString('\n')
+	e.From, _ = reader.ReadString('\n') // from
 
 	print("To: ")
-	to, _ := reader.ReadString('\n')
-	e.To = []string{to}
+	To, _ := reader.ReadString('\n') // to
+	e.To = []string{To}
 
-	print("Bcc (leave blank if none): ")
+	print("Bcc (leave blank if none): ") // bcc
 	Bcc, _ := reader.ReadString('\n')
 	e.Bcc = []string{Bcc}
 
-	print("Cc (leave blank if none): ")
+	print("Cc (leave blank if none): ") // cc
 	Cc, _ := reader.ReadString('\n')
 	e.To = []string{Cc}
 
 	print("Subject: ")
-	e.Subject, _ = reader.ReadString('\n')
+	e.Subject, _ = reader.ReadString('\n') // subject
 
 	print("Text: ")
-	Text, _ := reader.ReadString('\n')
-	e.To = []string{Text}
+	Text, _ := reader.ReadString('\n') // text
+	e.Text = []byte(Text)
+
+	print("File path (if sending one): ") // attachment
+	Path, _ := reader.ReadString('\n')
+	if Path != "" {
+		e.AttachFile(Path)
+	}
 
 	// authentication
-	print("Provider (example: smtp.gmail.com): ")
+	print("Provider (example: smtp.gmail.com): ") // provider
 	provider, _ := reader.ReadString('\n')
-	print("Port (example: 587): ")
+	print("Port (example: 587): ") // port
 	port, _ := reader.ReadString('\n')
-	print("Password (leave blank if none): ")
-	password, _ := reader.ReadString('\n')
+	print("Password (leave blank if none): ") // password
+	password := getPassword()
 
 	// confirmation
 	print("Confirm send? (yes/no): ")
 	confirm, _ := reader.ReadString('\n')
-	if confirm == "yes" {
+	if strings.TrimRight(confirm, "\n") == "yes" {
 		// sending
-		err := e.Send(provider+port, smtp.PlainAuth("", e.From, password, provider))
+		err := e.Send(provider+":"+port, smtp.PlainAuth("", e.From, password, provider))
 		if err != nil {
 			ct.Foreground(ct.Red, true)
 			println("error sending email -", err.Error())
 		}
-	} else {
+	} else { // cancelled
 		ct.Foreground(ct.Red, true)
 		println("Cancelled!")
 	}
