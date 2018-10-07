@@ -29,4 +29,4 @@ There isn't an offical executable yet. However, I should have one under 'release
 4. Note: the 'target' is optional, depending on the task
 
 ## Important
-Multi Go is intended to be used on linux. It may however run on Windows, it isn't tested, nor supported!
+Multi Go is intended to be used on linux. It might run on Windows. Currently it isn't tested, nor supported! I will eventually work on a Windows patch
