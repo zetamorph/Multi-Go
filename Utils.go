@@ -270,6 +270,7 @@ func runAudit() {
 	cmd.Stdout = &o
 
 	if err := cmd.Run(); err != nil {
+		ct.Foreground(ct.Red, true)
 		panic(err.Error())
 	}
 
@@ -320,22 +321,30 @@ func printCPU() {
 
 // Util function - prints info about system memory
 func printMemory() {
-	m, _ := mem.VirtualMemory()
+	vm, err := mem.VirtualMemory()
+	if err != nil {
+		ct.Foreground(ct.Red, true)
+		panic(err.Error())
+	}
 	println("\n-- Memory --\n")
-	println("Memory Available:", m.Available)
-	println("Memory Total:", m.Total)
+	println("Memory Available:", vm.Available)
+	println("Memory Total:", vm.Total)
 }
 
 // Util function - prints info about system host
 func printHost() {
-	hostInfo, _ := host.Info()
+	info, err := host.Info()
+	if err != nil {
+		ct.Foreground(ct.Red, true)
+		panic(err.Error())
+	}
 	println("\n-- Host --\n")
-	println("Kernal Version:", hostInfo.KernelVersion)
-	println("Platform:", hostInfo.Platform)
-	println("Platform Family:", hostInfo.PlatformFamily)
-	println("Platform Version:", hostInfo.PlatformVersion)
-	println("Uptime:", hostInfo.Uptime)
-	println("Host Name:", hostInfo.Hostname)
-	println("Host ID:", hostInfo.HostID)
-	println("OS:", hostInfo.OS)
+	println("Kernal Version:", info.KernelVersion)
+	println("Platform:", info.Platform)
+	println("Platform Family:", info.PlatformFamily)
+	println("Platform Version:", info.PlatformVersion)
+	println("Uptime:", info.Uptime)
+	println("Host Name:", info.Hostname)
+	println("Host ID:", info.HostID)
+	println("OS:", info.OS)
 }
