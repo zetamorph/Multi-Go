@@ -20,9 +20,14 @@ import (
 	"bufio"
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
 	"net/smtp"
+	"net/url"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -69,8 +74,43 @@ func systemInfoTask() {
 
 // TODO: use pwn api to see if an account has been pwned
 func pwnAccount(target string) {
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	var u *url.URL
+
+	u, _ = url.Parse("https://haveibeenpwned.com/api/v2/breachedaccount")
+	u.Path = path.Join(u.Path, target)
+
+	resp, err := netClient.Get(u.String())
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if resp.StatusCode == 404 {
+		ct.Foreground(ct.Green, true)
+		println("Account is not pwned")
+		return
+	}
+
+	type pwnedResponseItem struct {
+		Name string
+	}
+
+	var result []pwnedResponseItem
+
+	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Fatalln(err)
+		return
+	}
+
 	ct.Foreground(ct.Red, true)
-	println("Not a working feature yet")
+	println("The target account is associated with the following breaches: \n")
+	for i := 0; i < len(result); i++ {
+		item := result[i].Name
+		fmt.Printf("- %v\n", item)
+	}
 }
 
 // Encrypts the target file
