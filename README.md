@@ -13,7 +13,7 @@ A command line multi-tool made in Go, and aimed at security experts to make life
 - scrape website
 - password generator
 - system info
-### Working on:
+### Working on (will add more over time):
 - secure file deletion
 - file compression/decompression
 - check if account is breached (HaveIBeenPwned)
