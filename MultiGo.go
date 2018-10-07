@@ -66,7 +66,7 @@ func main() {
 	case "Scrape":
 		println("\nRunning task:", *t, "\nTarget:", *r)
 		scapeTask(*r)
-	case "Dos":
+	case "DOS":
 		println("\nRunning task:", *t, "\nTarget:", *r)
 		dosTask(*r)
 	case "generatePassword":
