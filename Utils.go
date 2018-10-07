@@ -30,6 +30,9 @@ import (
 
 	"github.com/daviddengcn/go-colortext"
 	"github.com/gocolly/colly"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/mem"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -131,7 +134,7 @@ func collyAddress(target string, savePage bool, ip bool) {
 // TODO: finish
 // TODO: document
 // BUG: exit status 1
-// Util function - run target program
+// Util function - run system audit
 func runAudit() {
 	const script = `#!/usr/bin/env python
 	# -*- coding: utf-8 -*-
@@ -275,7 +278,7 @@ func runAudit() {
 
 // TODO: rewrite in my own code
 // TODO: add more comments
-// Returns a random string
+// Util function - returns a random string
 /* Original: https://stackoverflow.com/questions/22892120
 /how-to-generate-a-random-string-of-a-fixed-length-in-go#31832326 */
 func randomString() string {
@@ -303,4 +306,36 @@ func randomString() string {
 	}
 
 	return string(b)
+}
+
+// TODO: add more info
+// Util function - prints CPU info
+func printCPU() {
+	cpuCount, _ := cpu.Counts(false)
+	cpuCountLogical, _ := cpu.Counts(true)
+	println("\n-- CPU --\n")
+	println("CPU Count: (logical)", cpuCountLogical)
+	println("CPU Count:", cpuCount)
+}
+
+// Util function - prints info about system memory
+func printMemory() {
+	m, _ := mem.VirtualMemory()
+	println("\n-- Memory --\n")
+	println("Memory Available:", m.Available)
+	println("Memory Total:", m.Total)
+}
+
+// Util function - prints info about system host
+func printHost() {
+	hostInfo, _ := host.Info()
+	println("\n-- Host --\n")
+	println("Kernal Version:", hostInfo.KernelVersion)
+	println("Platform:", hostInfo.Platform)
+	println("Platform Family:", hostInfo.PlatformFamily)
+	println("Platform Version:", hostInfo.PlatformVersion)
+	println("Uptime:", hostInfo.Uptime)
+	println("Host Name:", hostInfo.Hostname)
+	println("Host ID:", hostInfo.HostID)
+	println("OS:", hostInfo.OS)
 }

@@ -52,7 +52,17 @@ func listTasks() {
 	println("DOS - [IP/URL]")
 	println("Email")
 	println("generatePassword")
+	println("systemInfo")
+
 	println("About") // keep at bottom of print statements
+}
+
+// Prints extensive info about system
+func systemInfoTask() {
+	ct.Foreground(ct.Yellow, false)
+	printCPU()
+	printMemory()
+	printHost()
 }
 
 // TODO: use pwn api to see if an account has been pwned
@@ -118,9 +128,9 @@ func auditTask() {
 
 // TODO: use set length
 // Generates a random string for use as a password
-func generatePassword() {
+func generatePasswordTask() {
 	ct.Foreground(ct.Yellow, false)
-	println(randomString())
+	println("Password:", randomString())
 }
 
 // TODO: add amplification
@@ -143,7 +153,7 @@ func dosTask(target string) {
 
 // BUG: mail: missing word in phrase: mail: invalid string
 // TODO: use native go email
-// TODO: break up into multiple functions
+// TODO: break up into Util functions
 // TODO: find out if attachment works with path, or just name
 // Send email
 func emailTask() {
