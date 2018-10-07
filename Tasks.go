@@ -30,6 +30,7 @@ import (
 	"github.com/jordan-wright/email"
 )
 
+// TODO: add sha-256 hash
 // Takes a file path, and then prints the hash of the file
 func hashFile(target string) {
 	checkTarget(target)
